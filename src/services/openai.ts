@@ -10,7 +10,7 @@ const client = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-export const generateTaskResponse = async (message: string) => {
+export const generateReply = async (message: string) => {
   try {
     const response = await client.responses.create({
       model: "o4-mini",

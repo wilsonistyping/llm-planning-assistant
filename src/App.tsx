@@ -2,26 +2,24 @@ import { useState } from "react";
 import "./App.css";
 import type { TaskParserResponse } from "./types/task";
 import {
-  generateTaskResponse,
+  generateReply as generateReply,
   generateBackendResponse,
 } from "./services/openai";
 import Input from "./components/Input";
 
 function App() {
-  const [response, setResponse] = useState("");
+  const [reply, setReply] = useState("");
   const [backendResponse, setBackendResponse] = useState<TaskParserResponse>();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (message: string) => {
     setLoading(true);
     try {
-      const taskResponse = await generateTaskResponse(message);
-      setResponse(taskResponse);
-
+      setReply(await generateReply(message));
       const backendData = await generateBackendResponse(message);
       setBackendResponse(backendData);
     } catch (error) {
-      setResponse(`An error occurred: ${(error as Error).message}`);
+      setReply(`An error occurred: ${(error as Error).message}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -32,10 +30,10 @@ function App() {
     <div>
       <Input onSubmit={handleSubmit} />
       <div>{loading && <p>Loading...</p>}</div>
-      {response && (
+      {reply && (
         <div style={{ marginTop: "20px" }}>
           <h3>Generated Response:</h3>
-          <div dangerouslySetInnerHTML={{ __html: response }} />
+          <div dangerouslySetInnerHTML={{ __html: reply }} />
         </div>
       )}
       {backendResponse && (
