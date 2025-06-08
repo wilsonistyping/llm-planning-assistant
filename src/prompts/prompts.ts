@@ -1,3 +1,36 @@
+import type { TaskParserResponse } from "../types/task";
+
+const taskParserResponseExample: TaskParserResponse = {
+  tasks: [
+    {
+      title: "Complete Quarterly Report",
+      description: "Finish and submit the quarterly report",
+      urgency: "urgent",
+      importance: "important",
+      length: "l",
+      due_date: "2024-03-22",
+    },
+    {
+      title: "Schedule Team Meeting",
+      description:
+        "Organize and schedule a team meeting to discuss the new project",
+      urgency: "not_urgent",
+      importance: "important",
+      length: "s",
+    },
+    {
+      title: "Code Review",
+      description: "Review John's code changes and provide feedback",
+      urgency: "not_urgent",
+      importance: "important",
+      length: "m",
+    },
+  ],
+  metadata: {
+    total_tasks: 3,
+  },
+};
+
 export const BACKEND_SYSTEM_PROMPT = `You are the backend task planner. Your role is to convert structured output from the frontend system into a standardized JSON format for storage and further processing.
 
 Given a list of user tasks, their urgency/importance classification, and any associated scheduling suggestions, generate a valid JSON object with the following structure:
@@ -35,3 +68,23 @@ Suggest a realistic, time-aware plan to complete the tasks.
 If critical details (like time constraints or task specifics) are missing, ask follow-up questions to fill in the gaps. Use reasonable assumptions only when needed.
 
 Return the result in structured HTML format.`;
+
+export const BACKEND_SYSTEM_PROMPT_2 = `You are a task parser that converts user input into structured task data. Follow these rules:
+
+1. Extract all tasks from the user's input
+2. For each task:
+   - Create a clear, concise title
+   - Write a detailed description
+   - Determine urgency (urgent/not_urgent)
+   - Determine importance (important/not_important)
+   - Estimate task length (s/m/l/xl):
+     * s: < 30 minutes
+     * m: 30 minutes - 2 hours
+     * l: 2-4 hours
+     * xl: > 4 hours
+   - Extract due date if mentioned (in ISO 8601 format)
+
+3. Infer time availability from the input if possible
+
+Respond with a JSON object matching this structure:
+${JSON.stringify(taskParserResponseExample, null, 2)}`;

@@ -1,8 +1,10 @@
 export interface Task {
+  title: string;
   description: string;
   urgency: "urgent" | "not_urgent";
   importance: "important" | "not_important";
-  suggested_time?: string;
+  length: "s" | "m" | "l" | "xl";
+  due_date?: string;
 }
 
 export interface TaskMetadata {

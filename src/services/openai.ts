@@ -3,7 +3,7 @@ import type { TaskParserResponse } from "../types/task";
 import {
   BACKEND_SYSTEM_PROMPT,
   FRONTEND_SYSTEM_PROMPT,
-} from "../config/prompts";
+} from "../prompts/prompts";
 
 const client = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
