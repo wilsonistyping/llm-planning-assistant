@@ -6,12 +6,10 @@ import {
   generateBackendResponse,
 } from "./services/openai";
 import Input from "./components/Input";
-import Message from "./components/Message";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+// import { ButtonDemo } from "./components/ButtonDemo";
 
-interface ChatMessage {
-  content: string;
-  isUser: boolean;
-}
 
 function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -46,20 +44,25 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Chat Section */}
-      <div className="flex-1 flex flex-col border-r">
-        <div className="flex-1 overflow-y-auto">
-          {messages.map((message, index) => (
-            <Message
-              key={index}
-              content={message.content}
-              isUser={message.isUser}
-            />
-          ))}
-          {loading && (
-            <div className="p-4 text-muted-foreground">Thinking...</div>
-          )}
+
+    <div>
+      <Button>Test</Button>
+      <Textarea />
+      {/* <ButtonDemo>Button</ButtonDemo> */}
+      <Input onSubmit={handleSubmit} />
+      <div>{loading && <p>Loading...</p>}</div>
+      {reply && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Generated Response:</h3>
+          <div dangerouslySetInnerHTML={{ __html: reply }} />
+        </div>
+      )}
+      
+      {backendResponse && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Generated Backend Response:</h3>
+          <pre>{JSON.stringify(backendResponse, null, 2)}</pre>
+
         </div>
         <Input onSubmit={handleSubmit} />
       </div>
