@@ -109,7 +109,11 @@ function App() {
                 }
               }}
             />
-            <Button onClick={handleSubmit} disabled={loading}>
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="border border-input"
+            >
               Send
             </Button>
           </div>

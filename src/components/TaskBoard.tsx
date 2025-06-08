@@ -17,7 +17,11 @@ import type { Task } from "@/types/task";
 import { TaskCard } from "./TaskCard";
 import { Button } from "@/components/ui/button";
 import { prioritizeTasks } from "@/services/openai";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import {
+  TaskFilters,
+  type TaskFilters as TaskFiltersType,
+} from "./TaskFilters";
 
 interface TaskBoardProps {
   tasks: Task[];
@@ -26,6 +30,12 @@ interface TaskBoardProps {
 
 export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
   const [isPrioritizing, setIsPrioritizing] = useState(false);
+  const [filters, setFilters] = useState<TaskFiltersType>({
+    urgency: null,
+    importance: null,
+    length: null,
+    dueDate: null,
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -33,6 +43,29 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const filteredTasks = useMemo(() => {
+    console.log("Applying filters:", filters);
+    return tasks.filter((task) => {
+      if (filters.urgency && task.urgency !== filters.urgency) {
+        console.log(`Filtered out task "${task.title}" by urgency`);
+        return false;
+      }
+      if (filters.importance && task.importance !== filters.importance) {
+        console.log(`Filtered out task "${task.title}" by importance`);
+        return false;
+      }
+      if (filters.length && task.length !== filters.length) {
+        console.log(`Filtered out task "${task.title}" by length`);
+        return false;
+      }
+      if (filters.dueDate && task.due_date !== filters.dueDate) {
+        console.log(`Filtered out task "${task.title}" by due date`);
+        return false;
+      }
+      return true;
+    });
+  }, [tasks, filters]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -46,6 +79,7 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
       );
 
       const newTasks = arrayMove(tasks, oldIndex, newIndex);
+      console.log("Tasks reordered:", newTasks);
       onTasksUpdate(newTasks);
     }
   };
@@ -53,6 +87,7 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
   const handleTaskUpdate = (updatedTask: Task, index: number) => {
     const newTasks = [...tasks];
     newTasks[index] = updatedTask;
+    console.log("Task updated:", updatedTask);
     onTasksUpdate(newTasks);
   };
 
@@ -61,7 +96,9 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
 
     setIsPrioritizing(true);
     try {
+      console.log("Starting task prioritization...");
       const prioritizedTitles = await prioritizeTasks(tasks);
+      console.log("Received prioritized titles:", prioritizedTitles);
 
       // Create a map of task titles to their full task objects
       const taskMap = new Map(tasks.map((task) => [task.title, task]));
@@ -71,8 +108,8 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
         .map((title) => taskMap.get(title))
         .filter((task): task is Task => task !== undefined);
 
-      onTasksUpdate(reorderedTasks);
       console.log("Tasks reordered by priority:", reorderedTasks);
+      onTasksUpdate(reorderedTasks);
     } catch (error) {
       console.error("Failed to prioritize tasks:", error);
     } finally {
@@ -82,6 +119,8 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
 
   return (
     <div className="flex flex-col h-full">
+      <TaskFilters onFiltersChange={setFilters} />
+
       <div className="flex-1 overflow-y-auto p-4">
         <DndContext
           sensors={sensors}
@@ -89,11 +128,11 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={tasks.map((task, index) => task.title + index)}
+            items={filteredTasks.map((task, index) => task.title + index)}
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-2">
-              {tasks.map((task, index) => (
+              {filteredTasks.map((task, index) => (
                 <TaskCard
                   key={task.title + index}
                   task={task}
@@ -114,7 +153,7 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
           <Button
             onClick={handlePrioritize}
             disabled={isPrioritizing || tasks.length === 0}
-            className="flex-1"
+            className="border border-input"
           >
             {isPrioritizing ? "Prioritizing..." : "Prioritize Tasks"}
           </Button>
