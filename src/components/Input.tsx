@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 interface InputProps {
   onSubmit: (message: string) => void;
@@ -8,20 +10,32 @@ const Input = ({ onSubmit }: InputProps) => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = () => {
-    onSubmit(message);
+    if (message.trim()) {
+      onSubmit(message);
+      setMessage("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
-    <>
-      <textarea
+    <div className="flex flex-col gap-2 p-4">
+      <Textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        cols={50}
-        rows={10}
-        placeholder="Enter your message"
-      ></textarea>
-      <button onClick={handleSubmit}>Send</button>
-    </>
+        onKeyDown={handleKeyDown}
+        placeholder="Type your message..."
+        className="min-h-[100px] resize-none"
+      />
+      <Button onClick={handleSubmit} className="self-end">
+        Send
+      </Button>
+    </div>
   );
 };
 
