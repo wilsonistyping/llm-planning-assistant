@@ -6,6 +6,9 @@ import {
   generateBackendResponse,
 } from "./services/openai";
 import Input from "./components/Input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+// import { ButtonDemo } from "./components/ButtonDemo";
 
 function App() {
   const [reply, setReply] = useState("");
@@ -28,6 +31,9 @@ function App() {
 
   return (
     <div>
+      <Button>Test</Button>
+      <Textarea />
+      {/* <ButtonDemo>Button</ButtonDemo> */}
       <Input onSubmit={handleSubmit} />
       <div>{loading && <p>Loading...</p>}</div>
       {reply && (
