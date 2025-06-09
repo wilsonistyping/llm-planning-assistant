@@ -45,10 +45,10 @@ export function TaskCard({ task, index, onUpdate }: TaskCardProps) {
           value={task.urgency}
           onValueChange={(value) => handleLabelChange("urgency", value)}
         >
-          <SelectTrigger className="w-[120px] h-7 text-xs">
+          <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Urgency" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             <SelectItem value="urgent">Urgent</SelectItem>
             <SelectItem value="not_urgent">Not Urgent</SelectItem>
           </SelectContent>
@@ -58,10 +58,10 @@ export function TaskCard({ task, index, onUpdate }: TaskCardProps) {
           value={task.importance}
           onValueChange={(value) => handleLabelChange("importance", value)}
         >
-          <SelectTrigger className="w-[120px] h-7 text-xs">
+          <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Importance" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             <SelectItem value="important">Important</SelectItem>
             <SelectItem value="not_important">Not Important</SelectItem>
           </SelectContent>
@@ -71,10 +71,10 @@ export function TaskCard({ task, index, onUpdate }: TaskCardProps) {
           value={task.length}
           onValueChange={(value) => handleLabelChange("length", value)}
         >
-          <SelectTrigger className="w-[80px] h-7 text-xs">
-            <SelectValue placeholder="Length" />
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Task Size" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             <SelectItem value="s">Small</SelectItem>
             <SelectItem value="m">Medium</SelectItem>
             <SelectItem value="l">Large</SelectItem>

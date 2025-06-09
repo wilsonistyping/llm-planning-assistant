@@ -4,7 +4,9 @@ import {
   BACKEND_SYSTEM_PROMPT,
   FRONTEND_SYSTEM_PROMPT,
   PRIORITIZATION_SYSTEM_PROMPT,
+  TASK_CHAT_SYSTEM_PROMPT,
 } from "../prompts/prompts";
+import { marked } from "marked";
 
 const client = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -55,3 +57,46 @@ export const prioritizeTasks = async (tasks: Task[]): Promise<string[]> => {
     throw new Error(`Failed to prioritize tasks: ${(error as Error).message}`);
   }
 };
+
+export async function generateTaskChatResponse(
+  userInput: string,
+  tasks: Task[]
+): Promise<string> {
+  console.log("Generating task chat response with context:", {
+    userInput,
+    taskCount: tasks.length,
+    systemPrompt: TASK_CHAT_SYSTEM_PROMPT,
+  });
+
+  const response = await client.chat.completions.create({
+    model: "gpt-4-turbo-preview",
+    messages: [
+      {
+        role: "system",
+        content: TASK_CHAT_SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: `Current task list: ${JSON.stringify(
+          tasks,
+          null,
+          2
+        )}\n\nUser question: ${userInput}`,
+      },
+    ],
+    temperature: 0.7,
+  });
+
+  const reply = response.choices[0]?.message?.content;
+  if (!reply) {
+    throw new Error("Failed to generate task chat response");
+  }
+
+  console.log("Generated task chat response:", reply);
+
+  // Convert markdown to HTML
+  const htmlContent = marked(reply);
+  console.log("Converted markdown to HTML:", htmlContent);
+
+  return htmlContent;
+}
