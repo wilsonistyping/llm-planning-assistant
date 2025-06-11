@@ -119,7 +119,16 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <TaskFilters onFiltersChange={setFilters} />
+      <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+        <TaskFilters onFiltersChange={setFilters} />
+        <Button
+          onClick={handlePrioritize}
+          disabled={isPrioritizing || tasks.length === 0}
+          className="border border-input"
+        >
+          {isPrioritizing ? "Prioritizing..." : "Prioritize Tasks"}
+        </Button>
+      </div>
 
       <div className="flex-1 overflow-y-auto p-4">
         <DndContext
@@ -150,13 +159,6 @@ export function TaskBoard({ tasks, onTasksUpdate }: TaskBoardProps) {
       {/* Button Bar */}
       <div className="p-4 border-t bg-muted/50">
         <div className="flex gap-2">
-          <Button
-            onClick={handlePrioritize}
-            disabled={isPrioritizing || tasks.length === 0}
-            className="border border-input"
-          >
-            {isPrioritizing ? "Prioritizing..." : "Prioritize Tasks"}
-          </Button>
           {/* Placeholder for future buttons */}
           <div className="w-2" />
         </div>

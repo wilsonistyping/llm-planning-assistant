@@ -37,7 +37,7 @@ function App() {
 
     try {
       const reply = await generateReply(input);
-      const backendData = await generateBackendResponse(input);
+      const backendData = await generateBackendResponse(reply);
 
       const assistantMessage: Message = {
         role: "assistant",
@@ -100,9 +100,9 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Chat Section */}
-      <div className="w-1/2 flex flex-col border-r">
+      <div className="w-1/2 flex flex-col border-r overflow-auto">
         <Tabs defaultValue="chat" className="flex-1 flex flex-col">
           <TabsList className="w-full justify-start border-b rounded-none">
             <TabsTrigger value="chat">Chat</TabsTrigger>

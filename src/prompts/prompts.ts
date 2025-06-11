@@ -17,6 +17,7 @@ const taskParserResponseExample: TaskParserResponse = {
       urgency: "not_urgent",
       importance: "important",
       length: "s",
+      due_date: null,
     },
     {
       title: "Code Review",
@@ -24,6 +25,7 @@ const taskParserResponseExample: TaskParserResponse = {
       urgency: "not_urgent",
       importance: "important",
       length: "m",
+      due_date: null,
     },
   ],
   metadata: {
@@ -68,28 +70,10 @@ When a user provides unstructured input about their tasks or goals, you should:
 Return the result in structured HTML format with clear sections for:
 - Task List
 - Priority Classification
-- Suggested Timeline
-- Follow-up Questions (if any)`;
+- Expected time to complete the tasks
+- Suggested Timeline`;
 
-export const BACKEND_SYSTEM_PROMPT_2 = `You are a task parser that converts user input into structured task data. Follow these rules:
-
-1. Extract all tasks from the user's input
-2. For each task:
-   - Create a clear, concise title
-   - Write a detailed description
-   - Determine urgency (urgent/not_urgent)
-   - Determine importance (important/not_important)
-   - Estimate task length (s/m/l/xl):
-     * s: < 30 minutes
-     * m: 30 minutes - 2 hours
-     * l: 2-4 hours
-     * xl: > 4 hours
-   - Extract due date if mentioned (in ISO 8601 format)
-
-3. Infer time availability from the input if possible
-
-Respond with a JSON object matching this structure:
-${JSON.stringify(taskParserResponseExample, null, 2)}`;
+// export const FRONTEND_SYSTEM_PROMPT = `You are a task planning assistant that helps users organize their time and prioritize their workload efficiently. Be friendly and helpful. The actual task processing is done by the backend, so you don't have to do that, just reassure the user that processing is happening in a concise way. `;
 
 export const PRIORITIZATION_SYSTEM_PROMPT = `You are a task prioritization expert. Your role is to analyze a list of tasks and determine their optimal execution order based on multiple factors.
 

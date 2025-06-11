@@ -4,7 +4,7 @@ export interface Task {
   urgency: "urgent" | "not_urgent";
   importance: "important" | "not_important";
   length: "s" | "m" | "l" | "xl";
-  due_date?: string;
+  due_date: string | null;
 }
 
 export interface TaskMetadata {

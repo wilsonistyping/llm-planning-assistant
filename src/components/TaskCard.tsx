@@ -82,14 +82,12 @@ export function TaskCard({ task, index, onUpdate }: TaskCardProps) {
           </SelectContent>
         </Select>
 
-        {task.due_date && (
-          <input
-            type="date"
-            value={task.due_date}
-            onChange={(e) => handleLabelChange("due_date", e.target.value)}
-            className="h-7 text-xs px-2 rounded-md border"
-          />
-        )}
+        <input
+          type="date"
+          value={task.due_date || ""}
+          onChange={(e) => handleLabelChange("due_date", e.target.value)}
+          className="h-7 text-xs px-2 rounded-md border"
+        />
       </div>
     </div>
   );

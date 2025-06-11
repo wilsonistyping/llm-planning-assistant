@@ -28,6 +28,23 @@ export const generateReply = async (message: string) => {
   }
 };
 
+// export const generateBackendResponse = async (
+//   message: string
+// ): Promise<TaskParserResponse> => {
+//   try {
+//     const response = await client.responses.create({
+//       model: "o4-mini",
+//       input: message,
+//       instructions: BACKEND_SYSTEM_PROMPT,
+//     });
+//     return JSON.parse(response.output_text);
+//   } catch (error) {
+//     throw new Error(
+//       `Failed to generate backend response: ${(error as Error).message}`
+//     );
+//   }
+// };
+
 export const generateBackendResponse = async (
   message: string
 ): Promise<TaskParserResponse> => {
@@ -36,11 +53,59 @@ export const generateBackendResponse = async (
       model: "o4-mini",
       input: message,
       instructions: BACKEND_SYSTEM_PROMPT,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "task_response",
+          schema: {
+            type: "object",
+            properties: {
+              tasks: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    urgency: { type: "string", enum: ["urgent", "not_urgent"] },
+                    importance: {
+                      type: "string",
+                      enum: ["important", "not_important"],
+                    },
+                    length: { type: "string", enum: ["s", "m", "l", "xl"] },
+                    due_date: { type: "string", nullable: true },
+                  },
+                  required: [
+                    "title",
+                    "description",
+                    "urgency",
+                    "importance",
+                    "length",
+                    "due_date",
+                  ],
+                  additionalProperties: false,
+                },
+              },
+              metadata: {
+                type: "object",
+                properties: {
+                  total_tasks: { type: "number" },
+                },
+                required: ["total_tasks"],
+                additionalProperties: false,
+              },
+            },
+            required: ["tasks", "metadata"],
+            additionalProperties: false,
+          },
+          strict: true,
+        },
+      },
     });
     return JSON.parse(response.output_text);
   } catch (error) {
     throw new Error(
-      `Failed to generate backend response: ${(error as Error).message}`
+      `Failed to generate structured response: ${(error as Error).message}`
     );
   }
 };
